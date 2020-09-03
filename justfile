@@ -1,11 +1,11 @@
 build:
-    cargo build
+    cargo build -j $(nproc)
 
 release:
-    cargo build --release
+    cargo build --release -j $(nproc)
 
 run:
-    cargo run
+    cargo run -j $(nproc)
 
 revert_migration:
     diesel migration revert
