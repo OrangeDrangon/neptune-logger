@@ -20,7 +20,7 @@ impl Handler {
         Handler { pool }
     }
 
-    fn get_connection(&self) -> r2d2::PooledConnection<r2d2::ConnectionManager<PgConnection>> {
+    pub fn get_connection(&self) -> r2d2::PooledConnection<r2d2::ConnectionManager<PgConnection>> {
         self.pool.get().unwrap()
     }
 }
@@ -148,6 +148,8 @@ async fn main() {
         .expect("Error initializing connection pool");
 
     let handler = Handler::new(pool);
+
+    diesel_migrations::run_pending_migrations(&handler.get_connection()).expect("Failed to run migrations");
 
     let framework = StandardFramework::new().configure(|c| c.prefix("~")); // set the bot's prefix to "~"
 
