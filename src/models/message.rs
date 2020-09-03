@@ -1,38 +1,34 @@
 use crate::schema::messages;
 
 use chrono;
-use serenity::model::channel;
 
 #[derive(Insertable, Debug, PartialEq)]
 #[table_name = "messages"]
 pub struct NewMessage {
-    author: String,
-    author_id: String,
-    channel: String,
-    channel_id: String,
+    user_id: i32,
+    channel_id: i32,
+    discord_id: String,
     content: String,
 }
 
 impl NewMessage {
-    pub fn new(msg: &channel::Message, channel_name: &str) -> NewMessage {
+    pub fn new(content: &str, discord_id: &str, channel_id: i32, user_id: i32) -> NewMessage {
         NewMessage {
-            author: format!("{}#{}", msg.author.name, msg.author.discriminator),
-            author_id: format!("{}", msg.author.id),
-            channel: String::from(channel_name),
-            channel_id: format!("{}", msg.channel_id),
-            content: msg.content.clone(),
+            channel_id,
+            user_id,
+            discord_id: String::from(discord_id),
+            content: String::from(content),
         }
     }
 }
 
-#[derive(Identifiable, Queryable, Debug, PartialEq)]
+#[derive(Identifiable, Queryable, Associations, Debug, PartialEq)]
 #[table_name = "messages"]
 pub struct Message {
+    pub user_id: i32,
+    pub channel_id: i32,
     pub id: i32,
-    pub author: String,
-    pub author_id: String,
-    pub channel: String,
-    pub channel_id: String,
+    pub discord_id: String,
     pub content: String,
     pub created_at: chrono::NaiveDateTime,
 }

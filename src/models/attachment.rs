@@ -1,5 +1,7 @@
 use super::message::Message;
 use crate::schema::attachments;
+
+use chrono;
 #[derive(Insertable, Debug, PartialEq)]
 #[table_name = "attachments"]
 pub struct NewAttachment {
@@ -26,4 +28,5 @@ pub struct Attachment {
     pub id: i32,
     pub filename: String,
     pub binary_data: Vec<u8>,
+    pub created_at: chrono::NaiveDateTime,
 }
