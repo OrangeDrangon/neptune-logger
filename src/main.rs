@@ -143,8 +143,7 @@ fn create_pool(max_connections: u32) -> r2d2::Pool<r2d2::ConnectionManager<PgCon
     );
     r2d2::Builder::new()
         .max_size(max_connections)
-        .build(manager)
-        .expect("Error initializing connection pool")
+        .build(manager).expect("Error creating pool")
 }
 
 #[tokio::main]
@@ -154,11 +153,11 @@ async fn main() {
 
     let handler = Handler::new(pool);
 
-    diesel_migrations::run_pending_migrations(&handler.get_connection()).expect("Failed to run migrations");
+    diesel_migrations::run_pending_migrations(&handler.get_connection())
+        .expect("Failed to run migrations");
 
     let framework = StandardFramework::new().configure(|c| c); // set the bot's prefix to "~"
-
-    // Login with a bot token from the environment
+                                                               // Login with a bot token from the environment
     let token =
         env::var("DISCORD_TOKEN").expect("Please provide a DISCORD_TOKEN enviroment variable");
     let mut client = Client::new(token)

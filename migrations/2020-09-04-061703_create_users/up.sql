@@ -1,6 +1,6 @@
 -- Your SQL goes here
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    discord_id TEXT NOT NULL,
+    discord_id TEXT NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

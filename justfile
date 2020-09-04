@@ -12,3 +12,6 @@ revert_migration:
 
 run_migration:
     diesel migration run
+
+run_release: release
+    ./target/release/discord-logger
