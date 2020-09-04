@@ -137,21 +137,26 @@ impl EventHandler for Handler {
     }
 }
 
-#[tokio::main]
-async fn main() {
+fn create_pool(max_connections: u32) -> r2d2::Pool<r2d2::ConnectionManager<PgConnection>> {
     let manager = r2d2::ConnectionManager::<PgConnection>::new(
         env::var("DATABASE_URL").expect("Please provide a DATABASE_URL enviroment variable"),
     );
-    let pool = r2d2::Builder::new()
-        .max_size(15)
+    r2d2::Builder::new()
+        .max_size(max_connections)
         .build(manager)
-        .expect("Error initializing connection pool");
+        .expect("Error initializing connection pool")
+}
+
+#[tokio::main]
+async fn main() {
+    let max_connections = 15;
+    let pool = create_pool(max_connections);
 
     let handler = Handler::new(pool);
 
     diesel_migrations::run_pending_migrations(&handler.get_connection()).expect("Failed to run migrations");
 
-    let framework = StandardFramework::new().configure(|c| c.prefix("~")); // set the bot's prefix to "~"
+    let framework = StandardFramework::new().configure(|c| c); // set the bot's prefix to "~"
 
     // Login with a bot token from the environment
     let token =
